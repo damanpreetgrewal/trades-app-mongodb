@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv').config();
 const colors = require('colors');
 const users = require('./data/users');
-const trades = require('./data/trades');
+const dummyTrades = require('./data/trades');
 const User = require('./models/User');
 const Trade = require('./models/Trade');
 const connectDb = require('./config/db');
@@ -17,9 +17,15 @@ const importData = async () => {
 
     const createdUsers = await User.insertMany(users);
     const user = await User.findOne({ id: 1 });
-    trades[0].userId = user._id;
 
-    const createdTrades = await Trade.insertMany(trades);
+    let dummyTradesWithUserInfo = dummyTrades.map(trade => {
+      return {
+        ...trade,
+        userId: user._id,
+      };
+    });
+
+    const createdTrades = await Trade.insertMany(dummyTradesWithUserInfo);
 
     console.log(`Data Imported!`.green.inverse);
     process.exit();

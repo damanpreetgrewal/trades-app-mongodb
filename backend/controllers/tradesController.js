@@ -71,6 +71,19 @@ const postTrade = asyncHandler(async (req, res, next) => {
       executionDate: req.body.executionDate,
     });
 
+    console.log({
+      id: trade.id,
+      ticker: trade.ticker,
+      amount: trade.amount,
+      price: trade.price,
+      executionType: trade.executionType,
+      exectionDate: formatDate(trade.executionDate),
+      userId: trade.userId,
+      name: trade.userId.name,
+      recordCreatedAt: formatDate(trade.createdAt),
+      recordUpdatedAt: formatDate(trade.updatedAt),
+    });
+
     res.status(201).json({
       message: 'Trade posted successfully.',
       trade: {
