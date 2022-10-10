@@ -1,4 +1,5 @@
 const { body, check } = require('express-validator');
+const User = require('../models/User');
 const express = require('express');
 const router = express.Router();
 
@@ -38,8 +39,8 @@ router
         .withMessage(
           'Execution Type must be either buy or sell (case sensitive)'
         ),
-      check('userId').custom((value, { req }) => {
-        return User.findOne({ userId: value }).then(userDoc => {
+      check('userId').custom(async (value, { req }) => {
+        return User.findOne({ id: value }).then(userDoc => {
           if (!userDoc) {
             return Promise.reject(`User with id : ${value} doesnt exist`);
           }
@@ -96,12 +97,15 @@ router
   )
   .delete(
     [
-      body('userId')
-        .not()
-        .isEmpty()
-        .withMessage('UserId is required')
-        .matches(/^[0-9]+$/)
-        .withMessage('UserId must be a postive Integer'),
+      check('userId').custom(async (value, { req }) => {
+        console.log('userId', value);
+        return User.findOne({ id: value }).then(userDoc => {
+          if (!userDoc) {
+            console.log(userDoc);
+            return Promise.reject(`User with id : ${value} doesnt exist`);
+          }
+        });
+      }),
     ],
     deleteTrade
   );
