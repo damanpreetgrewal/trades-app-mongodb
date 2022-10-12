@@ -46,38 +46,46 @@ docker-compose down -v
 ## POST a Trade
 
 {
+
     "ticker": "HELO",
     "amount": 200.10,
     "price": 155.99,
     "executionType": "sell",
     "executionDate": "2023-01-31 00:00:00",
     "userId": 1
+    
 }
 
 ## Update a Trade
 
 {
+
     "ticker": "ABCD",
     "amount": 400.99,
     "price": 190.65,
     "executionType": "buy",
     "executionDate": "2022-01-31 00:00:00",
     "userId": 1
+
 }
 
 ## Delete a Trade
 
 {
+
     "userId": 2
+
 }
 
 ## /api/query End Point - POST Request
 
 {
+
     "userId": 1,
     "executionType": "sell",
     "executionStartDate" : "2022-09-06 00:00:00",
     "executionEndDate" : "2023-12-31 00:00:00"
+
 }
 
 ## Post a User
