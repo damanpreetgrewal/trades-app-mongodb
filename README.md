@@ -53,7 +53,7 @@ docker-compose down -v
     "executionType": "sell",
     "executionDate": "2023-01-31 00:00:00",
     "userId": 1
-    
+
 }
 
 ## Update a Trade
