@@ -1,4 +1,4 @@
-const { body, check } = require('express-validator');
+const { check } = require('express-validator');
 const User = require('../models/User');
 const express = require('express');
 const router = express.Router();
@@ -8,19 +8,15 @@ const { getTradesSummary } = require('../controllers/queryController');
 router.route('/').post(
   [
     check('userId')
-      .not()
-      .isEmpty()
-      .withMessage('UserId is required')
-      .matches(/^[0-9]+$/)
-      .withMessage('UserId must be a postive Integer')
-      .optional()
-      .custom((value, { req }) => {
-        return User.findOne({ userId: value }).then(userDoc => {
-          if (!userDoc) {
-            return Promise.reject(`User with UserId : ${value} doesn't exist`);
-          }
-        });
-      }),
+      .custom(async (value, { req }) => {
+        console.log('value', value);
+        const userDoc = await User.findOne({ id: value });
+        console.log(userDoc);
+        if (!userDoc) {
+          return Promise.reject(`User with UserId : ${value} doesn't exist`);
+        }
+      })
+      .optional(),
     check('executionType')
       .isIn(['buy', 'sell'])
       .withMessage('Execution Type must be either buy or sell (case sensitive)')

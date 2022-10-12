@@ -122,7 +122,7 @@ const updateTrade = asyncHandler(async (req, res, next) => {
     trade._id,
     { $set: toBeUpdatedTradeData },
     { new: true }
-  );
+  ).populate('userId');
 
   res.status(200).json({
     message: 'Trade updated successfully.',
@@ -173,8 +173,10 @@ const deleteTrade = asyncHandler(async (req, res, next) => {
       );
     }
 
-    const deletedTrade = await Trade.findByIdAndDelete(trade._id);
-
+    const deletedTrade = await Trade.findByIdAndDelete(trade._id).populate(
+      'userId'
+    );
+    console.log(deletedTrade);
     res.status(200).json({
       message: 'Trade deleted successfully.',
       trade: {

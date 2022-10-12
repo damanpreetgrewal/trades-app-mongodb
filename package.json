@@ -1,8 +1,8 @@
 {
-  "name": "trades-api",
+  "name": "trades-api-mongodb",
   "version": "1.0.0",
   "description": "Trades REST API - PureFacts Take Home Task - Submitted By Damanpreet",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
     "start": "node backend/server",
     "server": "nodemon backend/server",
