@@ -82,12 +82,15 @@ router
         .withMessage(
           'Execution Type must be either buy or sell (case sensitive)'
         ),
-      body('userId')
-        .not()
-        .isEmpty()
-        .withMessage('UserId is required')
-        .matches(/^[0-9]+$/)
-        .withMessage('UserId must be a postive Integer'),
+      check('userId').custom(async (value, { req }) => {
+        console.log('userId', value);
+        return User.findOne({ id: value }).then(userDoc => {
+          if (!userDoc) {
+            console.log(userDoc);
+            return Promise.reject(`User with id : ${value} doesnt exist`);
+          }
+        });
+      }),
       check('executionDate')
         .isISO8601()
         .toDate()
