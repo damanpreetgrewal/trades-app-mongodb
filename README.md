@@ -1,6 +1,6 @@
-# Docker Express Postgres RESTful API
+# Docker Express MongoDB/Mongoose RESTful API
 
-A Simple Trade REST API using typescript/node/express/postgres/express-validator/docker/docker-compose
+A Simple Trade REST API using node/express/mongoDB/mongoose/express-validator/docker/docker-compose
 
 ## Requirements
 
