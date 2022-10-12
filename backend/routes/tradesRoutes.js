@@ -85,7 +85,6 @@ router
       check('userId').custom(async (value, { req }) => {
         return User.findOne({ id: value }).then(userDoc => {
           if (!userDoc) {
-            console.log(userDoc);
             return Promise.reject(`User with id : ${value} doesnt exist`);
           }
         });
@@ -102,7 +101,6 @@ router
       check('userId').custom(async (value, { req }) => {
         return User.findOne({ id: value }).then(userDoc => {
           if (!userDoc) {
-            console.log(userDoc);
             return Promise.reject(`User with id : ${value} doesnt exist`);
           }
         });

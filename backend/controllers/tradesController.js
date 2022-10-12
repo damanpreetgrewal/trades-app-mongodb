@@ -36,6 +36,37 @@ const getTrades = asyncHandler(async (req, res, next) => {
   }
 });
 
+// @desc Get Single Trades
+// @route GET /api/trades/:id
+// @access Public
+const getSingleTrade = asyncHandler(async (req, res, next) => {
+  try {
+    const trades = await Trade.findOne({ id: req.params.id }).populate(
+      'userId'
+    );
+    if (!trades) {
+      return res.status(200).json({ message: 'No Trades found.' });
+    }
+    const transformedTrades = trades.map(trade => {
+      return {
+        id: trade.id,
+        ticker: trade.ticker,
+        amount: trade.amount,
+        price: trade.price,
+        executionType: trade.executionType,
+        executionDate: formatDate(trade.executionDate),
+        userId: trade.userId.id,
+        name: trade.userId.name,
+        recordCreatedAt: formatDate(trade.createdAt),
+        recordUpdatedAt: formatDate(trade.updatedAt),
+      };
+    });
+    res.status(200).json(transformedTrades);
+  } catch (err) {
+    next(err);
+  }
+});
+
 // @desc Post a trade
 // @route POST /api/trades
 // @access Public
@@ -51,10 +82,10 @@ const postTrade = asyncHandler(async (req, res, next) => {
 
     const user = await User.findOne({ id: req.body.userId });
 
-    const countofTradesBefore = await Trade.find().count();
+    const countofTradesBefore = await Trade.find().sort({ id: -1 }).limit(1);
 
     const trade = await Trade.create({
-      id: countofTradesBefore + 1,
+      id: countofTradesBefore[0].id + 1,
       ticker: req.body.ticker,
       amount: req.body.amount,
       price: req.body.price,
@@ -170,7 +201,7 @@ const deleteTrade = asyncHandler(async (req, res, next) => {
     const trade = await Trade.findOne({ id: req.params.id }).populate('userId');
     if (!trade) {
       res.status(404);
-      throw new Error('Trade not found');
+      throw new Error(`Trade with id: ${req.params.id} not found.`);
     }
     //Make sure the userId of the Trade matches the userId in the DB
     if (trade.userId.id !== req.body.userId) {
@@ -190,7 +221,7 @@ const deleteTrade = asyncHandler(async (req, res, next) => {
     const deletedTrade = await Trade.findByIdAndDelete(trade._id).populate(
       'userId'
     );
-    console.log(deletedTrade);
+
     res.status(200).json({
       message: 'Trade deleted successfully.',
       trade: {

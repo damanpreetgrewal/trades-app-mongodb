@@ -9,6 +9,7 @@ const errorController = require('./controllers/error');
 const connectDb = require('./config/db');
 const tradesroutes = require('./routes/tradesRoutes.js');
 const queryRoutes = require('./routes/queryRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/api/trades', tradesroutes);
 app.use('/api/query', queryRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/', (req, res) => {
   res.send('API is running...');

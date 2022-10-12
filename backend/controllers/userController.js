@@ -20,9 +20,6 @@ const getUsers = asyncHandler(async (req, res, next) => {
     });
     res.status(200).json(transformedUsers);
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
     next(err);
   }
 });

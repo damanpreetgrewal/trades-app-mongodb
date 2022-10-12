@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const connectDb = async () => {
   try {
     const MONGODB_URI = `mongodb://${process.env.MONGO_INITDB_ROOT_USERNAME}:${process.env.MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/trades-app?authSource=admin`;
+
     const conn = await mongoose.connect(MONGODB_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,

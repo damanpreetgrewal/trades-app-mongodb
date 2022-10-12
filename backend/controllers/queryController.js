@@ -49,8 +49,6 @@ const getTradesSummary = asyncHandler(async (req, res, next) => {
       );
     }
 
-    console.log(filteredTrades);
-
     filteredTrades = filteredTrades.map(trade => {
       return {
         id: trade.id,
@@ -64,11 +62,12 @@ const getTradesSummary = asyncHandler(async (req, res, next) => {
       };
     });
 
+    if (filteredTrades.length === 0) {
+      res.status(200).json({ message: 'No Trades Found.' });
+    }
+
     res.status(200).json(filteredTrades);
   } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
     next(err);
   }
 });

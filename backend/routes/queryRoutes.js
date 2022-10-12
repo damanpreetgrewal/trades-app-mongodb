@@ -9,9 +9,8 @@ router.route('/').post(
   [
     check('userId')
       .custom(async (value, { req }) => {
-        console.log('value', value);
         const userDoc = await User.findOne({ id: value });
-        console.log(userDoc);
+
         if (!userDoc) {
           return Promise.reject(`User with UserId : ${value} doesn't exist`);
         }
