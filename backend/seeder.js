@@ -16,12 +16,18 @@ const importData = async () => {
     await User.deleteMany();
 
     const createdUsers = await User.insertMany(users);
-    const user = await User.findOne({ id: 1 });
+    const user = await User.find();
 
-    let dummyTradesWithUserInfo = dummyTrades.map(trade => {
+    let dummyTradesWithUserInfo = dummyTrades.map((trade, index) => {
+      let userId = '';
+      if (index % 2 === 0) {
+        userId = user[0]._id;
+      } else {
+        userId = user[1]._id;
+      }
       return {
         ...trade,
-        userId: user._id,
+        userId,
       };
     });
 

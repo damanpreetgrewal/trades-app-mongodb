@@ -10,7 +10,7 @@ const tradeSchema = mongoose.Schema(
     ticker: {
       type: String,
       required: [true, 'Please add a Ticker/Stock Symbol field'],
-      maxLength: 20,
+      maxLength: 10,
     },
     amount: {
       type: Number,

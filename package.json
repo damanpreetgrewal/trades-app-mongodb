@@ -7,7 +7,9 @@
     "start": "node backend/server",
     "server": "nodemon backend/server",
     "data:import": "node backend/seeder",
-    "data:destroy": "node backend/seeder -d"
+    "data:destroy": "node backend/seeder -d",
+    "docker:up": "docker-compose up --build -d",
+    "docker:down": "docker-compose down -v"
   },
   "author": "",
   "license": "ISC",

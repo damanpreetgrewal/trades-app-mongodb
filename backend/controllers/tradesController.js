@@ -92,10 +92,10 @@ const postTrade = asyncHandler(async (req, res, next) => {
 // @access Public
 const updateTrade = asyncHandler(async (req, res, next) => {
   const trade = await Trade.findOne({ id: req.params.id }).populate('userId');
-  const user = await User.findOne({ userId: req.body.userId });
-  if (trade.length === 0) {
+
+  if (!trade) {
     res.status(404);
-    throw new Error('Trade not found');
+    throw new Error(`Trade with id: ${req.params.id} not found.`);
   }
   //Make sure the userId of the Trade matches the userId in the DB
   if (trade.userId.id !== req.body.userId) {
