@@ -31,15 +31,14 @@ const getUsers = asyncHandler(async (req, res, next) => {
 // @route POST /api/users
 // @access Public
 const postUser = asyncHandler(async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed, entered data is incorrect.');
-    error.validationErrors = errors.errors;
-    error.statusCode = 422;
-    throw error;
-  }
-
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error('Validation failed, entered data is incorrect.');
+      error.validationErrors = errors.errors;
+      error.statusCode = 422;
+      throw error;
+    }
     const countOfUsersBefore = await User.find().count();
 
     const user = await User.create({

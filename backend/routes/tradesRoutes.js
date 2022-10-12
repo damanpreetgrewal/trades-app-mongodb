@@ -83,7 +83,6 @@ router
           'Execution Type must be either buy or sell (case sensitive)'
         ),
       check('userId').custom(async (value, { req }) => {
-        console.log('userId', value);
         return User.findOne({ id: value }).then(userDoc => {
           if (!userDoc) {
             console.log(userDoc);
@@ -101,7 +100,6 @@ router
   .delete(
     [
       check('userId').custom(async (value, { req }) => {
-        console.log('userId', value);
         return User.findOne({ id: value }).then(userDoc => {
           if (!userDoc) {
             console.log(userDoc);

@@ -8,38 +8,37 @@ const formatDate = require('../utils/formatDate');
 // @route GET /api/query
 // @access Public
 const getTradesSummary = asyncHandler(async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed, entered data is incorrect.');
-    error.validationErrors = errors.errors;
-    error.statusCode = 422;
-    throw error;
-  }
-
-  let filter = { verified: true };
-
-  if (req.body.executionType)
-    filter = { ...filter, executionType: req.body.executionType };
-  if (req.body.executionStartDate && req.body.executionEndDate)
-    filter = {
-      ...filter,
-      executionDate: {
-        $gte: req.body.executionStartDate,
-        $lte: req.body.executionEndDate,
-      },
-    };
-  if (req.body.executionStartDate && !req.body.executionEndDate)
-    filter = {
-      ...filter,
-      executionDate: { $gte: req.body.executionStartDate },
-    };
-  if (!req.body.executionStartDate && req.body.executionEndDate)
-    filter = {
-      ...filter,
-      executionDate: { $lte: req.body.executionEndDate },
-    };
-
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error('Validation failed, entered data is incorrect.');
+      error.validationErrors = errors.errors;
+      error.statusCode = 422;
+      throw error;
+    }
+
+    let filter = { verified: true };
+
+    if (req.body.executionType)
+      filter = { ...filter, executionType: req.body.executionType };
+    if (req.body.executionStartDate && req.body.executionEndDate)
+      filter = {
+        ...filter,
+        executionDate: {
+          $gte: req.body.executionStartDate,
+          $lte: req.body.executionEndDate,
+        },
+      };
+    if (req.body.executionStartDate && !req.body.executionEndDate)
+      filter = {
+        ...filter,
+        executionDate: { $gte: req.body.executionStartDate },
+      };
+    if (!req.body.executionStartDate && req.body.executionEndDate)
+      filter = {
+        ...filter,
+        executionDate: { $lte: req.body.executionEndDate },
+      };
     let filteredTrades = await Trade.find(filter)
       .populate('userId')
       .sort({ createdAt: -1 });
@@ -59,7 +58,7 @@ const getTradesSummary = asyncHandler(async (req, res, next) => {
         amount: trade.amount,
         price: trade.price,
         executionType: trade.executionType,
-        exectionDate: formatDate(trade.executionDate),
+        exeutionDate: formatDate(trade.executionDate),
         userId: trade.userId.id,
         name: trade.userId.name,
       };

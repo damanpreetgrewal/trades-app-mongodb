@@ -20,7 +20,7 @@ const getTrades = asyncHandler(async (req, res, next) => {
         amount: trade.amount,
         price: trade.price,
         executionType: trade.executionType,
-        exectionDate: formatDate(trade.executionDate),
+        executionDate: formatDate(trade.executionDate),
         userId: trade.userId.id,
         name: trade.userId.name,
         recordCreatedAt: formatDate(trade.createdAt),
@@ -40,15 +40,15 @@ const getTrades = asyncHandler(async (req, res, next) => {
 // @route POST /api/trades
 // @access Public
 const postTrade = asyncHandler(async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed, entered data is incorrect.');
-    error.validationErrors = errors.errors;
-    error.statusCode = 422;
-    throw error;
-  }
-
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error('Validation failed, entered data is incorrect.');
+      error.validationErrors = errors.errors;
+      error.statusCode = 422;
+      throw error;
+    }
+
     const user = await User.findOne({ id: req.body.userId });
 
     const countofTradesBefore = await Trade.find().count();
@@ -75,7 +75,7 @@ const postTrade = asyncHandler(async (req, res, next) => {
         amount: populatedTradeData.amount,
         price: populatedTradeData.price,
         executionType: populatedTradeData.executionType,
-        exectionDate: formatDate(populatedTradeData.executionDate),
+        executionDate: formatDate(populatedTradeData.executionDate),
         userId: populatedTradeData.userId.id,
         name: populatedTradeData.userId.name,
         recordCreatedAt: formatDate(populatedTradeData.createdAt),
@@ -91,68 +91,82 @@ const postTrade = asyncHandler(async (req, res, next) => {
 // @route PUT /api/trades/:id
 // @access Public
 const updateTrade = asyncHandler(async (req, res, next) => {
-  const trade = await Trade.findOne({ id: req.params.id }).populate('userId');
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error('Validation failed, entered data is incorrect.');
+      error.validationErrors = errors.errors;
+      error.statusCode = 422;
+      throw error;
+    }
 
-  if (!trade) {
-    res.status(404);
-    throw new Error(`Trade with id: ${req.params.id} not found.`);
+    const trade = await Trade.findOne({ id: req.params.id }).populate('userId');
+
+    if (!trade) {
+      res.status(404);
+      throw new Error(`Trade with id: ${req.params.id} not found.`);
+    }
+    //Make sure the userId of the Trade matches the userId in the DB
+    if (trade.userId.id !== req.body.userId) {
+      res.status(401);
+      throw new Error(
+        'User who does not own the trade cannot update the trade'
+      );
+    }
+
+    if (trade.executionDate < new Date()) {
+      res.status(401);
+      throw new Error(
+        'Trades that have Execution Date in the past cannot be updated'
+      );
+    }
+
+    const toBeUpdatedTradeData = {
+      ticker: req.body.ticker,
+      amount: req.body.amount,
+      price: req.body.price,
+      executionType: req.body.executionType,
+      executionDate: req.body.executionDate,
+    };
+
+    const updatedTrade = await Trade.findByIdAndUpdate(
+      trade._id,
+      { $set: toBeUpdatedTradeData },
+      { new: true }
+    ).populate('userId');
+
+    res.status(200).json({
+      message: 'Trade updated successfully.',
+      trade: {
+        id: updatedTrade.id,
+        ticker: updatedTrade.ticker,
+        amount: updatedTrade.amount,
+        price: updatedTrade.price,
+        executionType: updatedTrade.executionType,
+        executionDate: formatDate(updatedTrade.executionDate),
+        userId: updatedTrade.userId.id,
+        name: updatedTrade.userId.name,
+        recordCreatedAt: formatDate(updatedTrade.createdAt),
+        recordUpdatedAt: formatDate(updatedTrade.updatedAt),
+      },
+    });
+  } catch (err) {
+    next(err);
   }
-  //Make sure the userId of the Trade matches the userId in the DB
-  if (trade.userId.id !== req.body.userId) {
-    res.status(401);
-    throw new Error('User who does not own the trade cannot update the trade');
-  }
-
-  if (trade.executionDate < new Date()) {
-    res.status(401);
-    throw new Error(
-      'Trades that have Execution Date in the past cannot be updated'
-    );
-  }
-
-  const toBeUpdatedTradeData = {
-    ticker: req.body.ticker,
-    amount: req.body.amount,
-    price: req.body.price,
-    executionType: req.body.executionType,
-    executionDate: req.body.exectionDate,
-  };
-
-  const updatedTrade = await Trade.findByIdAndUpdate(
-    trade._id,
-    { $set: toBeUpdatedTradeData },
-    { new: true }
-  ).populate('userId');
-
-  res.status(200).json({
-    message: 'Trade updated successfully.',
-    trade: {
-      id: updatedTrade.id,
-      ticker: updatedTrade.ticker,
-      amount: updatedTrade.amount,
-      price: updatedTrade.price,
-      executionType: updatedTrade.executionType,
-      exectionDate: formatDate(updatedTrade.executionDate),
-      userId: updatedTrade.userId.id,
-      name: updatedTrade.userId.name,
-      recordCreatedAt: formatDate(updatedTrade.createdAt),
-      recordUpdatedAt: formatDate(updatedTrade.updatedAt),
-    },
-  });
 });
 
 // @desc Delete a Trade
 // @route DELETE /api/trades/:id
 // @access Public
 const deleteTrade = asyncHandler(async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    const error = new Error('Validation failed, entered data is incorrect.');
-    error.validationErrors = errors.errors;
-    error.statusCode = 422;
-    throw error;
-  }
   try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      const error = new Error('Validation failed, entered data is incorrect.');
+      error.validationErrors = errors.errors;
+      error.statusCode = 422;
+      throw error;
+    }
     const trade = await Trade.findOne({ id: req.params.id }).populate('userId');
     if (!trade) {
       res.status(404);
@@ -185,7 +199,7 @@ const deleteTrade = asyncHandler(async (req, res, next) => {
         amount: deletedTrade.amount,
         price: deletedTrade.price,
         executionType: deletedTrade.executionType,
-        exectionDate: formatDate(deletedTrade.executionDate),
+        executionDate: formatDate(deletedTrade.executionDate),
         userId: deletedTrade.userId.id,
         name: deletedTrade.userId.name,
         recordCreatedAt: formatDate(deletedTrade.createdAt),
