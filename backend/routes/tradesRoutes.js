@@ -5,6 +5,7 @@ const router = express.Router();
 
 const {
   getTrades,
+  getSingleTrade,
   postTrade,
   updateTrade,
   deleteTrade,
@@ -56,6 +57,7 @@ router
 
 router
   .route('/:id')
+  .get(getSingleTrade)
   .put(
     [
       body('ticker')

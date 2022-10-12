@@ -41,26 +41,25 @@ const getTrades = asyncHandler(async (req, res, next) => {
 // @access Public
 const getSingleTrade = asyncHandler(async (req, res, next) => {
   try {
-    const trades = await Trade.findOne({ id: req.params.id }).populate(
-      'userId'
-    );
-    if (!trades) {
-      return res.status(200).json({ message: 'No Trades found.' });
+    const trade = await Trade.findOne({ id: req.params.id }).populate('userId');
+    if (!trade) {
+      return res
+        .status(200)
+        .json({ message: `Trade with id: ${req.params.id} not found.` });
     }
-    const transformedTrades = trades.map(trade => {
-      return {
-        id: trade.id,
-        ticker: trade.ticker,
-        amount: trade.amount,
-        price: trade.price,
-        executionType: trade.executionType,
-        executionDate: formatDate(trade.executionDate),
-        userId: trade.userId.id,
-        name: trade.userId.name,
-        recordCreatedAt: formatDate(trade.createdAt),
-        recordUpdatedAt: formatDate(trade.updatedAt),
-      };
-    });
+    const transformedTrades = {
+      id: trade.id,
+      ticker: trade.ticker,
+      amount: trade.amount,
+      price: trade.price,
+      executionType: trade.executionType,
+      executionDate: formatDate(trade.executionDate),
+      userId: trade.userId.id,
+      name: trade.userId.name,
+      recordCreatedAt: formatDate(trade.createdAt),
+      recordUpdatedAt: formatDate(trade.updatedAt),
+    };
+
     res.status(200).json(transformedTrades);
   } catch (err) {
     next(err);
@@ -242,4 +241,10 @@ const deleteTrade = asyncHandler(async (req, res, next) => {
   }
 });
 
-module.exports = { getTrades, postTrade, updateTrade, deleteTrade };
+module.exports = {
+  getTrades,
+  getSingleTrade,
+  postTrade,
+  updateTrade,
+  deleteTrade,
+};

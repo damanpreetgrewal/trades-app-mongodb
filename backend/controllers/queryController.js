@@ -1,7 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const { validationResult } = require('express-validator');
 const Trade = require('../models/Trade');
-const User = require('../models/User');
 const formatDate = require('../utils/formatDate');
 
 // @desc Get Trades Summary
@@ -41,7 +40,7 @@ const getTradesSummary = asyncHandler(async (req, res, next) => {
       };
     let filteredTrades = await Trade.find(filter)
       .populate('userId')
-      .sort({ createdAt: -1 });
+      .sort({ id: -1 });
 
     if (req.body.userId) {
       filteredTrades = filteredTrades.filter(
@@ -59,6 +58,8 @@ const getTradesSummary = asyncHandler(async (req, res, next) => {
         exeutionDate: formatDate(trade.executionDate),
         userId: trade.userId.id,
         name: trade.userId.name,
+        recordCreatedAt: formatDate(trade.createdAt),
+        recordUpdatedAt: formatDate(trade.updatedAt),
       };
     });
 
