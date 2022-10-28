@@ -1,6 +1,6 @@
 const express = require('express');
-var cors = require('cors');
-var helmet = require('helmet');
+const cors = require('cors');
+const helmet = require('helmet');
 const colors = require('colors');
 const dotenv = require('dotenv').config();
 const port = process.env.PORT || 8000;
