@@ -4,7 +4,7 @@ A Simple Trade REST API using node/express/mongoDB/mongoose/express-validator/do
 
 ## Requirements
 
-1. Node.js >= 16
+1. Node.js  
 2. Docker
 3. Docker compose
 

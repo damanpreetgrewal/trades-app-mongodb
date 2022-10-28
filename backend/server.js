@@ -1,5 +1,6 @@
 const express = require('express');
 var cors = require('cors');
+var helmet = require('helmet');
 const colors = require('colors');
 const dotenv = require('dotenv').config();
 const port = process.env.PORT || 8000;
@@ -19,9 +20,14 @@ connectDb();
 //Enable All CORS Requests
 app.use(cors());
 
+//Set Security Headers
+app.use(helmet());
+
+//Body Parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+//Routes
 app.use('/api/trades', tradesroutes);
 app.use('/api/query', queryRoutes);
 app.use('/api/users', userRoutes);
@@ -33,6 +39,7 @@ app.get('/', (req, res) => {
 app.use(errorController.get404);
 app.use(errorHandler);
 
+/* Start the server */
 app.listen(
   port,
   console.log(
